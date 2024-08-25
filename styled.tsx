@@ -35,16 +35,43 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
   return Element;
 }
 
+function recreateElement<T extends keyof JSX.IntrinsicElements>(
+  Component: React.FC<JSX.IntrinsicElements[T]>,
+): React.FC<JSX.IntrinsicElements[T]> {
+  return (style: TemplateStringsArray) => {
+    const defaultStyle = style.join("");
+    const Element = (
+      props: JSX.IntrinsicElements[T],
+    ) => {
+      const { style, children, ...restProps } = props;
+
+      let set_style: typeof style = defaultStyle;
+      if (style) {
+        set_style = style;
+      }
+      const newProps: Prop = { style: set_style, ...restProps } as Prop;
+      return (
+        <div style={set_style}>
+          <Component style={set_style} {...newProps}>{children}</Component>
+        </div>
+      );
+    };
+    return Element;
+  };
+}
+
 interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
   (defaultStyle: TemplateStringsArray): React.Fc<JSX.IntrinsicElements[T]>;
 }
 
-type Styled = {
-  [T in SupportedHTMLElements]: RenderFunc<T>;
-};
+type Styled =
+  & typeof recreateElement
+  & {
+    [T in SupportedHTMLElements]: RenderFunc<T>;
+  };
 
 // deno-lint-ignore no-explicit-any
-const styledTmp: any = {};
+const styledTmp: any = recreateElement;
 
 domElements.forEach((domElement) => {
   styledTmp[domElement] = (style: TemplateStringsArray) => {

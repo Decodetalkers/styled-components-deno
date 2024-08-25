@@ -1,14 +1,34 @@
 /** @jsxRuntime automatic */
 /** @jsxImportSource npm:preact@^10.23.2 */
+import type { PropsWithChildren } from "react";
 
 import { render } from "preact";
 
 import styled from "styled-components-deno";
 
 const Title = styled.div`
-    font-size: 2em;
+    font-size: 4em;
     text-align: center;
     color: #BF4F74;
+`;
+
+type TitleProp = {
+  title?: string;
+};
+
+function Title2({ title, children }: PropsWithChildren<TitleProp>) {
+  return (
+    <div>
+      <h1>{title}</h1>
+      {children}
+    </div>
+  );
+}
+
+const Title3 = styled(Title2)`
+  font-size: 2em;
+  text-align: center;
+  color: #000FFEE;
 `;
 
 const mount = document.getElementById("mount");
@@ -22,7 +42,10 @@ function App() {
     <main>
       <div>
         <Title>hello</Title>
-        <h1>hello</h1>
+        <Title2 title={"abcdeft"}>
+          <p>ff</p>
+        </Title2>
+        <Title3 title={"abcd"}>hello</Title3>
       </div>
     </main>
   );
