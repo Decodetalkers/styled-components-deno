@@ -15,7 +15,7 @@ type Prop =
   & ClassAttributes<HTMLInputElement>;
 
 function createElement<T extends keyof JSX.IntrinsicElements>(
-  tag: keyof JSX.IntrinsicElements,
+  tag: T,
   defaultStyle: string,
 ): React.FC<JSX.IntrinsicElements[T]> {
   const Element = (
