@@ -1,5 +1,5 @@
 /** @jsxRuntime automatic */
-/** @jsxImportSource npm:preact@10.23.2 */
+/** @jsxImportSource npm:preact@^10.23.2 */
 
 import { render } from "preact";
 
