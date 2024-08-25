@@ -1,5 +1,5 @@
 /** @jsxRuntime automatic */
-/** @jsxImportSource npm:preact */
+/** @jsxImportSource npm:preact@10.23.2 */
 
 import {
   type ClassAttributes,
