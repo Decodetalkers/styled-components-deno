@@ -1,0 +1,13 @@
+root = true
+
+[*.{tsx}]
+indent_style = space
+indent_size = 2
+
+[*.{ts}]
+indent_style = space
+indent_size = 2
+
+[*.{json}]
+indent_style = space
+indent_size = 2
