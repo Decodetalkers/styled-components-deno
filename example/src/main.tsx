@@ -1,6 +1,7 @@
-/* @jsx h */
+/** @jsxRuntime automatic */
+/** @jsxImportSource npm:preact@10.23.2 */
 
-import { h, render } from "preact";
+import { render } from "preact";
 
 import styled from "styled-components-deno";
 
