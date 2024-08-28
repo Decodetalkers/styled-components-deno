@@ -71,6 +71,8 @@ async function esbuild_generate() {
     entryPoints: [
       "./src/main.tsx",
     ],
+    jsxImportSource: "npm:preact",
+    jsx: "automatic",
     outdir: distDir,
     bundle: true,
     format: "esm",

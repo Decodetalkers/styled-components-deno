@@ -1,5 +1,3 @@
-/** @jsxRuntime automatic */
-/** @jsxImportSource npm:preact@^10.23.2 */
 import type { PropsWithChildren } from "react";
 
 import { render } from "preact";
