@@ -14,6 +14,24 @@ type Prop =
   & JSX.DOMAttributes<HTMLInputElement>
   & ClassAttributes<HTMLInputElement>;
 
+type Style =
+  | string
+  | JSX.CSSProperties
+  | undefined
+  | JSX.SignalLike<string | JSX.CSSProperties | undefined>;
+
+function generateClassName(styles: Style) {
+  return `sc-${btoa(styles as string).slice(0, 8)}`;
+}
+
+function injectStyles(className: string, styles: Style) {
+  if (!document.querySelector(`.${className}`)) {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = `.${className} { ${styles} }`;
+    document.head.appendChild(styleSheet);
+  }
+}
+
 function createElement<T extends keyof JSX.IntrinsicElements>(
   tag: T,
   defaultStyle: string,
@@ -23,12 +41,15 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
   ) => {
     const { style, children, ...restProps } = props;
 
-    let set_style: typeof style = defaultStyle;
-    if (style) {
-      set_style = style;
-    }
+    const newstyle = style || defaultStyle;
+    const className = generateClassName(newstyle);
+    injectStyles(className, newstyle);
 
-    const newProp: Prop = { style: set_style, ...restProps } as Prop;
+    const newProp: Prop = {
+      className: props.className || className,
+      style,
+      ...restProps,
+    } as Prop;
 
     return createPreactElement(tag, newProp, children);
   };
@@ -45,14 +66,19 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
     ) => {
       const { style, children, ...restProps } = props;
 
-      let set_style: typeof style = defaultStyle;
-      if (style) {
-        set_style = style;
-      }
-      const newProps: Prop = { style: set_style, ...restProps } as Prop;
+      const newstyle = style || defaultStyle;
+      const className = generateClassName(newstyle);
+      injectStyles(className, newstyle);
+
+      const newProps: Prop = {
+        className: props.className || className,
+        style,
+        ...restProps,
+      } as Prop;
+
       return (
-        <div style={set_style}>
-          <Component style={set_style} {...newProps}>{children}</Component>
+        <div className={className}>
+          <Component {...newProps}>{children}</Component>
         </div>
       );
     };
