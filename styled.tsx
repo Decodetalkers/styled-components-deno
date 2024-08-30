@@ -10,6 +10,20 @@ import {
 import type React from "react";
 import { domElements, type SupportedHTMLElements } from "./domElements.ts";
 
+class UniqueUid {
+  uid: number = 0;
+  constructor(uid?: number) {
+    if (uid) {
+      this.uid = uid;
+    }
+  }
+  next(): number {
+    return ++this.uid;
+  }
+}
+
+const ID = new UniqueUid();
+
 type Prop =
   & JSX.DOMAttributes<HTMLInputElement>
   & ClassAttributes<HTMLInputElement>;
@@ -20,8 +34,8 @@ type Style =
   | undefined
   | JSX.SignalLike<string | JSX.CSSProperties | undefined>;
 
-function generateClassName(styles: Style) {
-  return `sc-${btoa(styles as string).slice(0, 8)}`;
+function generateClassName() {
+  return `styled-component-${ID.next()}`;
 }
 
 function injectStyles(className: string, styles: Style) {
@@ -42,7 +56,7 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
     const { style, children, ...restProps } = props;
 
     const newstyle = style || defaultStyle;
-    const className = generateClassName(newstyle);
+    const className = generateClassName();
     injectStyles(className, newstyle);
 
     const newProp: Prop = {
@@ -67,7 +81,7 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
       const { style, children, ...restProps } = props;
 
       const newstyle = style || defaultStyle;
-      const className = generateClassName(newstyle);
+      const className = generateClassName();
       injectStyles(className, newstyle);
 
       const newProps: Prop = {
