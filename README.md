@@ -1,6 +1,6 @@
 # Simple Styled Component for deno preact
 
-It is the same with the origin one, although it is a simplier one.
+It is the same with the origin one, although it is a simpler one.
 
 ```tsx
 import type { PropsWithChildren } from "react";
