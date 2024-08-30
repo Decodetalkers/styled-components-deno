@@ -10,6 +10,12 @@ const Title = styled.div`
     color: #BF4F74;
 `;
 
+const Title4 = styled.div({
+  "font-size": "4em",
+  "text-align": "center",
+  "color": "#BF4F74",
+});
+
 type TitleProp = {
   title?: string;
 };
@@ -44,6 +50,7 @@ function App() {
           <p>ff</p>
         </Title2>
         <Title3 title={"abcd"}>hello</Title3>
+        <Title4>hello4</Title4>
       </div>
     </main>
   );

@@ -46,6 +46,41 @@ function injectStyles(className: string, styles: Style) {
   }
 }
 
+function injectStylesObject(className: string, styles: Style) {
+  if (!document.querySelector(`.${className}`)) {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = `.${className} ${styles}`;
+    document.head.appendChild(styleSheet);
+  }
+}
+
+function createElementObject<T extends keyof JSX.IntrinsicElements>(
+  tag: T,
+  defaultStyleObject: object,
+): React.FC<JSX.IntrinsicElements[T]> {
+  let defaultStyle = JSON.stringify(defaultStyleObject, null, 2);
+  defaultStyle = defaultStyle.replaceAll(",", ";");
+  defaultStyle = defaultStyle.replaceAll('"', "");
+  const Element = (
+    props: JSX.IntrinsicElements[T],
+  ) => {
+    const { style, children, ...restProps } = props;
+
+    const newstyle = style || defaultStyle;
+    const className = generateClassName();
+    injectStylesObject(className, newstyle);
+
+    const newProp: Prop = {
+      className: props.className || className,
+      style,
+      ...restProps,
+    } as Prop;
+
+    return createPreactElement(tag, newProp, children);
+  };
+  return Element;
+}
+
 function createElement<T extends keyof JSX.IntrinsicElements>(
   tag: T,
   defaultStyle: string,
@@ -101,7 +136,9 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
 }
 
 interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
-  (defaultStyle: TemplateStringsArray): React.Fc<JSX.IntrinsicElements[T]>;
+  (
+    defaultStyle: TemplateStringsArray | object,
+  ): React.Fc<JSX.IntrinsicElements[T]>;
 }
 
 type Styled =
@@ -114,9 +151,12 @@ type Styled =
 const styledTmp: any = recreateElement;
 
 domElements.forEach((domElement) => {
-  styledTmp[domElement] = (style: TemplateStringsArray) => {
-    const style_css = style.join("");
-    return createElement<typeof domElement>(domElement, style_css);
+  styledTmp[domElement] = (style: TemplateStringsArray | object) => {
+    if (Array.isArray(style) && "raw" in style) {
+      const style_css = style.join("");
+      return createElement<typeof domElement>(domElement, style_css);
+    }
+    return createElementObject<typeof domElement>(domElement, style);
   };
 });
 
