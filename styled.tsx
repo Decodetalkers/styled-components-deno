@@ -160,6 +160,12 @@ domElements.forEach((domElement) => {
   };
 });
 
+/**
+ * @module
+ * This is similar with styled in styled-components but for deno.
+ *
+ * You can take reference at styled-components from npm
+ */
 const styled = styledTmp as Styled;
 
 export { styled };
