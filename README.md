@@ -1,5 +1,7 @@
 # Simple Styled Component for deno preact
 
+[![JSR](https://jsr.io/badges/@nobody/styled-components-deno)](https://jsr.io/@nobody/styled-components-deno)
+
 It is the same with the origin one, although it is a simpler one. but it has
 most features.
 
