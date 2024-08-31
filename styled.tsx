@@ -118,9 +118,11 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
   ) => {
     let defaultStyle = "";
     const arglen = args.length;
-    ostyle.forEach((string, i) => {
+    ostyle.forEach((stylestr, i) => {
       if (i < arglen) {
-        defaultStyle += string + args[i](props);
+        defaultStyle += stylestr + args[i](props);
+      } else {
+        defaultStyle += stylestr;
       }
     });
     const { style, children, ...restProps } = props;
