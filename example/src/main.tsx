@@ -35,6 +35,17 @@ const Title3 = styled(Title2)`
   color: #000FFEE;
 `;
 
+const Title5 = styled.div<{ highlight?: boolean }>`
+    font-size: 4em;
+    text-align: center;
+    color: ${(prop) => {
+  if (prop.highlight) {
+    return "#BF4F74";
+  }
+  return "#777777";
+}}
+`;
+
 const mount = document.getElementById("mount");
 
 if (mount) {
@@ -51,6 +62,8 @@ function App() {
         </Title2>
         <Title3 title={"abcd"}>hello</Title3>
         <Title4>hello4</Title4>
+        <Title5 highlight={false}>hello6</Title5>
+        <Title5 highlight={true}>hello6</Title5>
       </div>
     </main>
   );

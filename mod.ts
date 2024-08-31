@@ -12,6 +12,16 @@
  *    text-align: center;
  *    color: #BF4F74
  *  `
+ * const Title5 = styled.div<{ highlight?: boolean }>`
+ *    font-size: 4em;
+ *    text-align: center;
+ *    color: ${(prop) => {
+ *  if (prop.highlight) {
+ *    return "#BF4F74";
+ *  }
+ *  return "#777777";
+ * }}
+ *
  * ```
  */
 

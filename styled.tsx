@@ -105,6 +105,41 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
   return Element;
 }
 
+/**
+ * This allow to define a prop with styled-components
+ */
+function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
+  tag: T,
+  ostyle: TemplateStringsArray,
+  ...args: ((input: I) => SupportedHtmlType)[]
+): React.FC<JSX.IntrinsicElements[T]> {
+  const Element = (
+    props: JSX.IntrinsicElements[T] & I,
+  ) => {
+    let defaultStyle = "";
+    const arglen = args.length;
+    ostyle.forEach((string, i) => {
+      if (i < arglen) {
+        defaultStyle += string + args[i](props);
+      }
+    });
+    const { style, children, ...restProps } = props;
+
+    const newstyle = style || defaultStyle;
+    const className = generateClassName();
+    injectStyles(className, newstyle);
+
+    const newProp: Prop = {
+      className: props.className || className,
+      style,
+      ...restProps,
+    } as Prop;
+
+    return createPreactElement(tag, newProp, children);
+  };
+  return Element;
+}
+
 function recreateElement<T extends keyof JSX.IntrinsicElements>(
   Component: React.FC<JSX.IntrinsicElements[T]>,
 ): React.FC<JSX.IntrinsicElements[T]> {
@@ -135,9 +170,12 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
   };
 }
 
+type SupportedHtmlType = string | number;
+
 interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
-  (
+  <I>(
     defaultStyle: TemplateStringsArray | object,
+    ...args: ((input: I) => SupportedHtmlType)[]
   ): React.Fc<JSX.IntrinsicElements[T]>;
 }
 
@@ -151,10 +189,22 @@ type Styled =
 const styledTmp: any = recreateElement;
 
 domElements.forEach((domElement) => {
-  styledTmp[domElement] = (style: TemplateStringsArray | object) => {
+  styledTmp[domElement] = function <I,>(
+    style: TemplateStringsArray | object,
+    ...args: ((input: I) => SupportedHtmlType)[]
+  ) {
+    // it is TemplateStringsArray
     if (Array.isArray(style) && "raw" in style) {
-      const style_css = style.join("");
-      return createElement<typeof domElement>(domElement, style_css);
+      if (args.length == 0) {
+        const style_css = style.join("");
+        return createElement<typeof domElement>(domElement, style_css);
+      } else {
+        return createElementWithProps<typeof domElement, I>(
+          domElement,
+          style as TemplateStringsArray,
+          ...args,
+        );
+      }
     }
     return createElementObject<typeof domElement>(domElement, style);
   };
