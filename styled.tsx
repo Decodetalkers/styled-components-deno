@@ -28,17 +28,11 @@ type Prop =
   & JSX.DOMAttributes<HTMLInputElement>
   & ClassAttributes<HTMLInputElement>;
 
-type Style =
-  | string
-  | JSX.CSSProperties
-  | undefined
-  | JSX.SignalLike<string | JSX.CSSProperties | undefined>;
-
 function generateClassName() {
   return `styled-component-${ID.next()}`;
 }
 
-function injectStyles(className: string, styles: Style) {
+function injectStyles(className: string, styles: string) {
   if (!document.querySelector(`.${className}`)) {
     const styleSheet = document.createElement("style");
     styleSheet.innerHTML = `.${className} { ${styles} }`;
@@ -46,7 +40,7 @@ function injectStyles(className: string, styles: Style) {
   }
 }
 
-function injectStylesObject(className: string, styles: Style) {
+function injectStylesObject(className: string, styles: string) {
   if (!document.querySelector(`.${className}`)) {
     const styleSheet = document.createElement("style");
     styleSheet.innerHTML = `.${className} ${styles}`;
@@ -64,15 +58,14 @@ function createElementObject<T extends keyof JSX.IntrinsicElements>(
   const Element = (
     props: JSX.IntrinsicElements[T],
   ) => {
-    const { style, children, ...restProps } = props;
+    const { children, ...restProps } = props;
 
-    const newstyle = style || defaultStyle;
+    const newstyle = defaultStyle;
     const className = generateClassName();
     injectStylesObject(className, newstyle);
 
     const newProp: Prop = {
       className: props.className || className,
-      style,
       ...restProps,
     } as Prop;
 
@@ -88,15 +81,14 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
   const Element = (
     props: JSX.IntrinsicElements[T],
   ) => {
-    const { style, children, ...restProps } = props;
+    const { children, ...restProps } = props;
 
-    const newstyle = style || defaultStyle;
+    const newstyle = defaultStyle;
     const className = generateClassName();
     injectStyles(className, newstyle);
 
     const newProp: Prop = {
       className: props.className || className,
-      style,
       ...restProps,
     } as Prop;
 
@@ -125,15 +117,13 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
         defaultStyle += stylestr;
       }
     });
-    const { style, children, ...restProps } = props;
+    const { children, ...restProps } = props;
 
-    const newstyle = style || defaultStyle;
     const className = generateClassName();
-    injectStyles(className, newstyle);
+    injectStyles(className, defaultStyle);
 
     const newProp: Prop = {
       className: props.className || className,
-      style,
       ...restProps,
     } as Prop;
 
@@ -152,9 +142,8 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
     ) => {
       const { style, children, ...restProps } = props;
 
-      const newstyle = style || defaultStyle;
       const className = generateClassName();
-      injectStyles(className, newstyle);
+      injectStyles(className, defaultStyle);
 
       const newProps: Prop = {
         className: props.className || className,
