@@ -253,7 +253,7 @@ type DynamicCSSFn<T> = (
 ) => DynamicCSSFnResult<T>;
 
 /** @module
- * dynamicCss, whose style can be changed in runtime
+ * dynamicCSS, whose style can be changed in runtime
  *
  * @example
  * ```typescript

@@ -38,7 +38,7 @@ type WindowPosition = {
   y: number;
 };
 
-const Window = dynamicCss<WindowPosition>`
+const Window = dynamicCSS<WindowPosition>`
   width: 400px;
   height: 200px;
   position: absolute;
