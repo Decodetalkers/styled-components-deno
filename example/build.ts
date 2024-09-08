@@ -29,12 +29,15 @@ if (release_mode) {
   distDir = "dist/release";
 }
 
+const favicon = "favicon.ico";
+
 ensureDir(distDir);
 
 const fsRoot = `${Deno.cwd()}/dist/debug`;
 
 const options = { overwrite: true };
 copySync(sync_asset, distDir, options);
+copySync(favicon, `${distDir}/${favicon}`, options);
 
 /**
  * In-memory store of open WebSockets for
