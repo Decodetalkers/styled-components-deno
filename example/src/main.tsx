@@ -9,13 +9,13 @@ import styled from "styled-components-deno";
 import { dynamicCSS } from "styled-components-deno";
 
 const Title3 = styled.div`
-  font-size: 3em;
+  font-size: 2em;
   text-align: center;
   color: #BF4F74;
 `;
 
 const Title4 = styled.div({
-  fontSize: "3em",
+  fontSize: "2em",
   textAlign: "center",
   color: "#BF4F74",
 });
@@ -36,8 +36,9 @@ const Window = dynamicCSS<WindowPosition>`
   top: ${(prop) => `${prop.y}px`};
   left: ${(prop) => `${prop.x}px`};
   border: 1px solid #ccc;
-  background-color: #f1f1f1;
+  background-color: #f1f1f1aa;
   cursor: move;
+  backdrop-filter: blur(10px);
 `;
 
 function Title1({ title, children }: PropsWithChildren<TitleProp>) {
@@ -58,7 +59,7 @@ const Title2 = styled(Title1)`
 `;
 
 const Title5 = styled.div<{ highlight?: boolean }>`
-    font-size: 4em;
+    font-size: 3em;
     text-align: center;
     color: ${(prop) => {
   if (prop.highlight) {
@@ -109,7 +110,7 @@ function MovedWindow() {
       className={lostyle.className}
       onMouseDown={handleMouseDown}
     >
-      <Title3>I am a draggable component, use dynamicCss</Title3>
+      <Title3>I am a draggable component, use dynamicCSS</Title3>
     </div>
   );
 }
@@ -121,11 +122,11 @@ function App() {
         <Title1 title={"CSS 1"}>
           <p>This a origin all one with out any css</p>
         </Title1>
-        <Title2 title={"css1 with css"}>I add css to CSS1</Title2>
+        <Title2 title={"css1 with css"}> CSSw I add css to CSS1</Title2>
         <Title3>CSS3: add base css</Title3>
         <Title4>CSS4: I am css with style object</Title4>
-        <Title5 highlight={false}>CSS5: Title with highlight</Title5>
-        <Title5 highlight={true}>Css5:Title With out highlight</Title5>
+        <Title5 highlight={false}>CSS5: Title without highlight</Title5>
+        <Title5 highlight={true}>Css5:Title With highlight</Title5>
         <MovedWindow />
       </div>
     </main>
