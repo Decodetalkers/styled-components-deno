@@ -4,9 +4,7 @@ import { render } from "preact";
 
 import { useRef } from "preact/hooks";
 
-import styled from "styled-components-deno";
-
-import { dynamicCSS } from "styled-components-deno";
+import styled, { dynamicCSS } from "styled-components-deno";
 
 const Title3 = styled.div`
   font-size: 2em;
