@@ -122,7 +122,7 @@ function App() {
         <Title1 title={"CSS 1"}>
           <p>This a origin all one with out any css</p>
         </Title1>
-        <Title2 title={"css1 with css"}> CSS2 I add css to CSS1</Title2>
+        <Title2 title={"css1 with css"}>CSS2 I add css to CSS1</Title2>
         <Title3>CSS3: add base css</Title3>
         <Title4>CSS4: I am css with style object</Title4>
         <Title5 highlight={false}>CSS5: Title without highlight</Title5>

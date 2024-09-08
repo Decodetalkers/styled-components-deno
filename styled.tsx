@@ -258,7 +258,7 @@ type DynamicCSSFn<T> = (
  *
  * @example
  * ```typescript
- * import { dynamicCss } from "@nobody/styled-components-deno";
+ * import { dynamicCSS } from "@nobody/styled-components-deno";
  * type WindowPosition = {
  *   x: number;
  *   y: number;
