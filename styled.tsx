@@ -89,13 +89,13 @@ function createElementObject<T extends keyof JSX.IntrinsicElements>(
   let defaultStyle = JSON.stringify(toSnakeCase(defaultStyleObject), null, 2);
   defaultStyle = defaultStyle.replaceAll(",", ";");
   defaultStyle = defaultStyle.replaceAll('"', "");
+  const className = generateClassName();
   const Element = (
     props: JSX.IntrinsicElements[T],
   ) => {
     const { children, ...restProps } = props;
 
     const newstyle = defaultStyle;
-    const className = generateClassName();
     injectStylesObject(className, newstyle);
 
     const newProp: Prop = {
@@ -112,13 +112,14 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
   tag: T,
   defaultStyle: string,
 ): React.FC<JSX.IntrinsicElements[T]> {
+  const className = generateClassName();
   const Element = (
     props: JSX.IntrinsicElements[T],
   ) => {
     const { children, ...restProps } = props;
 
     const newstyle = defaultStyle;
-    const className = generateClassName();
+
     injectStyles(className, newstyle);
 
     const newProp: Prop = {
