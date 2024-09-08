@@ -318,8 +318,7 @@ function dynamicCSS<T>(
   ostyle: TemplateStringsArray,
   ...args: ((input: T) => SupportedHtmlType)[]
 ): DynamicCSSFn<T> {
-  const className = generateClassName();
-  const updateStyle = (props: T): void => {
+  const localupdateStyle = (className: string, props: T): void => {
     let defaultStyle = "";
     const arglen = args.length;
     ostyle.forEach((stylestr, i) => {
@@ -343,11 +342,13 @@ function dynamicCSS<T>(
       }
     });
 
+    const className = generateClassName();
+
     injectStyles(className, defaultStyle);
 
     return {
       className,
-      updateStyle,
+      updateStyle: (props: T) => localupdateStyle(className, props),
     };
   };
 }
