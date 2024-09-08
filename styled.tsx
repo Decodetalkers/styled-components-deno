@@ -319,7 +319,7 @@ function dynamicCSS<T>(
   ...args: ((input: T) => SupportedHtmlType)[]
 ): DynamicCSSFn<T> {
   const className = generateClassName();
-  const localUpdateStyle = (props: T): void => {
+  const updateStyle = (props: T): void => {
     let defaultStyle = "";
     const arglen = args.length;
     ostyle.forEach((stylestr, i) => {
@@ -347,7 +347,7 @@ function dynamicCSS<T>(
 
     return {
       className,
-      updateStyle: (props: T) => localUpdateStyle(props),
+      updateStyle,
     };
   };
 }
