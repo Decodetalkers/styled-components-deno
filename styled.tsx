@@ -314,7 +314,7 @@ type DynamicCSSFn<T> = (
  * }
  * ```
  */
-function dynamicCss<T>(
+function dynamicCSS<T>(
   ostyle: TemplateStringsArray,
   ...args: ((input: T) => SupportedHtmlType)[]
 ): DynamicCSSFn<T> {
@@ -352,6 +352,6 @@ function dynamicCss<T>(
   };
 }
 
-export { dynamicCss, styled };
+export { dynamicCSS, styled };
 
 export type { DynamicCSSFn, DynamicCSSFnResult };

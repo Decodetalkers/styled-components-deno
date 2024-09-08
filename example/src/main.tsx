@@ -6,7 +6,7 @@ import { useRef } from "preact/hooks";
 
 import styled from "styled-components-deno";
 
-import { dynamicCss } from "styled-components-deno";
+import { dynamicCSS } from "styled-components-deno";
 
 const Title3 = styled.div`
   font-size: 3em;
@@ -29,7 +29,7 @@ type WindowPosition = {
   y: number;
 };
 
-const Window = dynamicCss<WindowPosition>`
+const Window = dynamicCSS<WindowPosition>`
   width: 400px;
   height: 200px;
   position: absolute;
