@@ -9,15 +9,15 @@ import styled from "styled-components-deno";
 import { dynamicCss } from "styled-components-deno";
 
 const Title3 = styled.div`
-    font-size: 3em;
-    text-align: center;
-    color: #BF4F74;
+  font-size: 3em;
+  text-align: center;
+  color: #BF4F74;
 `;
 
 const Title4 = styled.div({
-  "font-size": "3em",
-  "text-align": "center",
-  "color": "#BF4F74",
+  fontSize: "3em",
+  textAlign: "center",
+  color: "#BF4F74",
 });
 
 type TitleProp = {
@@ -109,7 +109,7 @@ function MovedWindow() {
       className={lostyle.className}
       onMouseDown={handleMouseDown}
     >
-      <Title3>I am a dragable component, use dynamicCss</Title3>
+      <Title3>I am a draggable component, use dynamicCss</Title3>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { styled } from "./mod.ts";
 
 import { assertEquals } from "jsr:@std/assert";
 import { elements } from "./domElements.ts";
+import { toSnakeCase } from "./styled.tsx";
 
 Deno.test(function testStyledLen() {
   let size = 0;
@@ -9,4 +10,18 @@ Deno.test(function testStyledLen() {
     size += 1;
   }
   assertEquals(size, elements.length);
+});
+
+Deno.test(function testSnakeStyle() {
+  const target = {
+    "font-size": "3em",
+    "text-align": "center",
+    color: "#BF4F74",
+  };
+  const origin = {
+    fontSize: "3em",
+    textAlign: "center",
+    color: "#BF4F74",
+  };
+  assertEquals(toSnakeCase(origin), target);
 });
