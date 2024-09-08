@@ -27,6 +27,10 @@
 
 export * from "./styled.tsx";
 
-import { styled } from "./styled.tsx";
+import { dynamicCss, styled } from "./styled.tsx";
+
+export type { DynamicCSSFn, DynamicCSSFnResult } from "./styled.tsx";
 
 export default styled;
+
+export { dynamicCss };

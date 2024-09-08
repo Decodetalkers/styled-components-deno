@@ -48,6 +48,23 @@ function injectStylesObject(className: string, styles: string) {
   }
 }
 
+function updateStylesCSS(className: string, styles: string) {
+  if (!document.querySelector(`.${className}`)) {
+    return;
+  }
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    const sheet = document.styleSheets[i];
+    for (let j = 0; j < sheet.cssRules.length; j++) {
+      const rule: CSSStyleRule = sheet.cssRules[j] as CSSStyleRule;
+      if (rule.selectorText == `.${className}`) {
+        sheet.deleteRule(j);
+        sheet.insertRule(`.${className} { ${styles} }`, j);
+        return;
+      }
+    }
+  }
+}
+
 function createElementObject<T extends keyof JSX.IntrinsicElements>(
   tag: T,
   defaultStyleObject: object,
@@ -209,4 +226,53 @@ domElements.forEach((domElement) => {
  */
 const styled = styledTmp as Styled;
 
-export { styled };
+type DynamicCSSFnResult<T> = {
+  className: string;
+  updateStyle: (props: T) => void;
+};
+
+type DynamicCSSFn<T> = (
+  props: T,
+) => DynamicCSSFnResult<T>;
+
+function dynamicCss<T>(
+  ostyle: TemplateStringsArray,
+  ...args: ((input: T) => SupportedHtmlType)[]
+): DynamicCSSFn<T> {
+  const className = generateClassName();
+  const localUpdateStyle = (props: T): void => {
+    let defaultStyle = "";
+    const arglen = args.length;
+    ostyle.forEach((stylestr, i) => {
+      if (i < arglen) {
+        defaultStyle += stylestr + args[i](props);
+      } else {
+        defaultStyle += stylestr;
+      }
+    });
+    updateStylesCSS(className, defaultStyle);
+  };
+
+  return (props: T) => {
+    let defaultStyle = "";
+    const arglen = args.length;
+    ostyle.forEach((stylestr, i) => {
+      if (i < arglen) {
+        defaultStyle += stylestr + args[i](props);
+      } else {
+        defaultStyle += stylestr;
+      }
+    });
+
+    injectStyles(className, defaultStyle);
+
+    return {
+      className,
+      updateStyle: (props: T) => localUpdateStyle(props),
+    };
+  };
+}
+
+export { dynamicCss, styled };
+
+export type { DynamicCSSFn, DynamicCSSFnResult };
