@@ -76,7 +76,7 @@ if (mount) {
 }
 
 function MovedWindow() {
-  const [windowPos, setWindowPos] =useState<WindowPosition>({x: 0, y: 0});
+  const [windowPos, setWindowPos] = useState<WindowPosition>({ x: 0, y: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: MouseEvent) => {

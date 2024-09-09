@@ -6,7 +6,6 @@ It is the same with the origin one, although it is a simpler one. but it has
 most features.
 
 ```tsx
-
 import type { PropsWithChildren } from "react";
 
 import { render } from "preact";
@@ -84,7 +83,7 @@ if (mount) {
 }
 
 function MovedWindow() {
-  const [windowPos, setWindowPos] =useState<WindowPosition>({x: 0, y: 0});
+  const [windowPos, setWindowPos] = useState<WindowPosition>({ x: 0, y: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: MouseEvent) => {
