@@ -108,16 +108,25 @@ function createElementObject<T extends keyof JSX.IntrinsicElements>(
   return Element;
 }
 
-function createElement<T extends keyof JSX.IntrinsicElements>(
+function createElement<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
-  defaultStyle: string,
+  ostyle: TemplateStringsArray,
+  ...args: SupportedHtmlType[]
 ): React.FC<JSX.IntrinsicElements[T]> {
   const className = generateClassName();
   const Element = (
-    props: JSX.IntrinsicElements[T],
+    props: JSX.IntrinsicElements[T] & I,
   ) => {
     const { children, ...restProps } = props;
-
+    let defaultStyle = "";
+    const arglen = args.length;
+    ostyle.forEach((stylestr, i) => {
+      if (i < arglen) {
+        defaultStyle += stylestr + args[i];
+      } else {
+        defaultStyle += stylestr;
+      }
+    });
     const newstyle = defaultStyle;
 
     injectStyles(className, newstyle);
@@ -132,15 +141,38 @@ function createElement<T extends keyof JSX.IntrinsicElements>(
   return Element;
 }
 
+type IdRemember<T> = {
+  mappedId: Map<T, string>;
+};
+
+type StoragedFun<T extends keyof JSX.IntrinsicElements, I> =
+  & React.FC<JSX.IntrinsicElements[T]>
+  & IdRemember<I>;
+
+type ElementCallBackFun<I> = (input: I) => SupportedHtmlType;
+
+function isSupportElementArray<I>(
+  arr: ElementCallBackFun<I>[] | SupportedHtmlType[],
+): arr is SupportedHtmlType[] {
+  if (arr.length == 0) {
+    return true;
+  }
+  return typeof arr[0] !== "function"; // Check if the frist arg is function
+}
+
 /**
  * This allow to define a prop with styled-components
  */
 function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
-  ...args: ((input: I) => SupportedHtmlType)[]
+  ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
 ): React.FC<JSX.IntrinsicElements[T]> {
-  const Element = (
+  if (isSupportElementArray<I>(args)) {
+    return createElement<T, I>(tag, ostyle, ...args);
+  }
+
+  const ElementTmp: StoragedFun<T, I> = Object.assign((
     props: JSX.IntrinsicElements[T] & I,
   ) => {
     let defaultStyle = "";
@@ -154,8 +186,14 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
     });
     const { children, ...restProps } = props;
 
-    const className = generateClassName();
-    injectStyles(className, defaultStyle);
+    // NOTE: cached the id
+    let className: string | undefined = ElementTmp.mappedId.get(props as I);
+
+    if (!className) {
+      className = generateClassName();
+      injectStyles(className, defaultStyle);
+      ElementTmp.mappedId.set(props as I, className);
+    }
 
     const newProp: Prop = {
       className: props.className || className,
@@ -163,8 +201,9 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
     } as Prop;
 
     return createPreactElement(tag, newProp, children);
-  };
-  return Element;
+  }, { mappedId: new Map() });
+
+  return ElementTmp;
 }
 
 function recreateElement<T extends keyof JSX.IntrinsicElements>(
@@ -201,7 +240,7 @@ type SupportedHtmlType = string | number;
 interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
   <I>(
     defaultStyle: TemplateStringsArray | object,
-    ...args: ((input: I) => SupportedHtmlType)[]
+    ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
   ): React.Fc<JSX.IntrinsicElements[T]>;
 }
 
@@ -217,20 +256,15 @@ const styledTmp: any = recreateElement;
 domElements.forEach((domElement) => {
   styledTmp[domElement] = function <I,>(
     style: TemplateStringsArray | object,
-    ...args: ((input: I) => SupportedHtmlType)[]
+    ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
   ) {
     // it is TemplateStringsArray
     if (Array.isArray(style) && "raw" in style) {
-      if (args.length == 0) {
-        const style_css = style.join("");
-        return createElement<typeof domElement>(domElement, style_css);
-      } else {
-        return createElementWithProps<typeof domElement, I>(
-          domElement,
-          style as TemplateStringsArray,
-          ...args,
-        );
-      }
+      return createElementWithProps<typeof domElement, I>(
+        domElement,
+        style as TemplateStringsArray,
+        ...args,
+      );
     }
     return createElementObject<typeof domElement>(domElement, style);
   };
@@ -244,14 +278,13 @@ domElements.forEach((domElement) => {
  */
 const styled = styledTmp as Styled;
 
-type DynamicCSSFnResult<T> = {
-  className: string;
-  updateStyle: (props: T) => void;
-};
-
-type DynamicCSSFn<T> = (
-  props: T,
-) => DynamicCSSFnResult<T>;
+type DynamicCSSFn<T> =
+  & ((
+    props: T,
+  ) => string)
+  & {
+    className: string | undefined;
+  };
 
 /** @module
  * dynamicCSS, whose style can be changed in runtime
@@ -259,12 +292,13 @@ type DynamicCSSFn<T> = (
  * @example
  * ```typescript
  * import { dynamicCSS } from "@nobody/styled-components-deno";
+ * import { useRef, useState } from "preact/hooks";
  * type WindowPosition = {
  *   x: number;
  *   y: number;
  * };
  *
- * const Window = dynamicCss<WindowPosition>`
+ * const Window = dynamicCSS<WindowPosition>`
  *   width: 400px;
  *   height: 200px;
  *   position: absolute;
@@ -275,9 +309,8 @@ type DynamicCSSFn<T> = (
  *   cursor: move;
  * `;
  * function MovedWindow() {
+ *  const [windowPos, setWindowPos] =useState<WindowPosition>({x: 0, y: 0});
  *  const windowRef = useRef<HTMLDivElement>(null);
- *
- *  const lostyle = Window({ x: 0, y: 0 });
  *
  *  const handleMouseDown = (e: MouseEvent) => {
  *    const windowElement = windowRef.current;
@@ -291,7 +324,7 @@ type DynamicCSSFn<T> = (
  *    const handleMouseMove = (moveEvent: MouseEvent) => {
  *      const left = moveEvent.clientX - offsetX;
  *      const top = moveEvent.clientY - offsetY;
- *      lostyle.updateStyle({ x: left, y: top });
+ *      setWindowPos({ x: left, y: top });
  *    };
  *
  *    const handleMouseUp = () => {
@@ -306,10 +339,9 @@ type DynamicCSSFn<T> = (
  *  return (
  *    <div
  *      ref={windowRef}
- *      className={lostyle.className}
+ *      className={Window(windowPos)}
  *      onMouseDown={handleMouseDown}
  *    >
- *      <Title3>I am a draggable component, use dynamicCss</Title3>
  *    </div>
  *  );
  * }
@@ -319,20 +351,7 @@ function dynamicCSS<T>(
   ostyle: TemplateStringsArray,
   ...args: ((input: T) => SupportedHtmlType)[]
 ): DynamicCSSFn<T> {
-  const localupdateStyle = (className: string, props: T): void => {
-    let defaultStyle = "";
-    const arglen = args.length;
-    ostyle.forEach((stylestr, i) => {
-      if (i < arglen) {
-        defaultStyle += stylestr + args[i](props);
-      } else {
-        defaultStyle += stylestr;
-      }
-    });
-    updateStylesCSS(className, defaultStyle);
-  };
-
-  return (props: T) => {
+  const FunTmp: DynamicCSSFn<T> = Object.assign((props: T) => {
     let defaultStyle = "";
     const arglen = args.length;
     ostyle.forEach((stylestr, i) => {
@@ -343,17 +362,21 @@ function dynamicCSS<T>(
       }
     });
 
-    const className = generateClassName();
+    let className: string | undefined = undefined;
+    if (FunTmp.className) {
+      className = FunTmp.className;
+      updateStylesCSS(className, defaultStyle);
+    } else {
+      className = generateClassName();
+      FunTmp.className = className;
+      injectStyles(className, defaultStyle);
+    }
 
-    injectStyles(className, defaultStyle);
-
-    return {
-      className,
-      updateStyle: (props: T) => localupdateStyle(className, props),
-    };
-  };
+    return FunTmp.className;
+  }, { className: undefined });
+  return FunTmp;
 }
 
 export { dynamicCSS, styled };
 
-export type { DynamicCSSFn, DynamicCSSFnResult };
+export type { DynamicCSSFn };

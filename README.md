@@ -11,12 +11,14 @@ import type { PropsWithChildren } from "react";
 
 import { render } from "preact";
 
-import { useRef } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 
 import styled, { dynamicCss } from "@nobody/styled-components-deno";
 
+const FontSize = 2;
+
 const Title3 = styled.div`
-  font-size: 3em;
+  font-size: ${FontSize}em;
   text-align: center;
   color: #BF4F74;
 `;
@@ -82,9 +84,8 @@ if (mount) {
 }
 
 function MovedWindow() {
+  const [windowPos, setWindowPos] =useState<WindowPosition>({x: 0, y: 0});
   const windowRef = useRef<HTMLDivElement>(null);
-
-  const lostyle = Window({ x: 0, y: 0 });
 
   const handleMouseDown = (e: MouseEvent) => {
     const windowElement = windowRef.current;
@@ -98,7 +99,7 @@ function MovedWindow() {
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const left = moveEvent.clientX - offsetX;
       const top = moveEvent.clientY - offsetY;
-      lostyle.updateStyle({ x: left, y: top });
+      setWindowPos({ x: left, y: top });
     };
 
     const handleMouseUp = () => {
@@ -113,10 +114,10 @@ function MovedWindow() {
   return (
     <div
       ref={windowRef}
-      className={lostyle.className}
+      className={Window(windowPos)}
       onMouseDown={handleMouseDown}
     >
-      <Title3>I am a draggable component, use dynamicCss</Title3>
+      <Title3>I am a draggable component, use dynamicCSS</Title3>
     </div>
   );
 }
