@@ -157,7 +157,7 @@ function isSupportElementArray<I>(
   if (arr.length == 0) {
     return true;
   }
-  return typeof arr[0] !== "function"; // Check if the frist arg is function
+  return typeof arr[0] !== "function"; // Check if the first arg is function
 }
 
 /**
