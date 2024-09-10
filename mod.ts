@@ -37,4 +37,4 @@ export type { DynamicCSSFn } from "./styled.tsx";
  */
 export default styled;
 
-export { css, dynamicCSS };
+export { css, dynamicCSS, styled };
