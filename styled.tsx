@@ -271,7 +271,6 @@ domElements.forEach((domElement) => {
 });
 
 /**
- * @module
  * This is similar with styled in styled-components but for deno.
  *
  * You can take reference at styled-components from npm
@@ -286,7 +285,7 @@ type DynamicCSSFn<T> =
     className: string | undefined;
   };
 
-/** @module
+/**
  * dynamicCSS, whose style can be changed in runtime
  *
  * @example

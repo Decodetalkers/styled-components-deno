@@ -29,12 +29,6 @@ import { css, dynamicCSS, styled } from "./styled.tsx";
 
 export type { DynamicCSSFn } from "./styled.tsx";
 
-/**
- * @module
- * This is similar with styled in styled-components but for deno.
- *
- * You can take reference at styled-components from npm
- */
 export default styled;
 
 export { css, dynamicCSS, styled };
