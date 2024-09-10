@@ -4,7 +4,7 @@ import { render } from "preact";
 
 import { useRef, useState } from "preact/hooks";
 
-import styled, { dynamicCSS } from "styled-components-deno";
+import styled, { css, dynamicCSS } from "styled-components-deno";
 
 const FontSize = 3;
 
@@ -69,6 +69,12 @@ const Title5 = styled.div<{ highlight?: boolean }>`
 }}
 `;
 
+const Title6 = css`
+  font-size: ${FontSize}em;
+  text-align: center;
+  color: #BF4F74;
+`;
+
 const mount = document.getElementById("mount");
 
 if (mount) {
@@ -126,6 +132,7 @@ function App() {
         <Title4>CSS4: I am css with style object</Title4>
         <Title5 highlight={false}>CSS5: Title without highlight</Title5>
         <Title5 highlight={true}>CSS5: Title With highlight</Title5>
+        <div class={Title6}>CSS 6</div>
         <MovedWindow />
       </div>
     </main>

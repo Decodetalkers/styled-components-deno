@@ -377,6 +377,30 @@ function dynamicCSS<T>(
   return FunTmp;
 }
 
-export { dynamicCSS, styled };
+/**
+ * This one is used to create a stylesheet, what is return is css
+ * This one will never change when created
+ */
+function css(
+  ostyle: TemplateStringsArray,
+  ...args: SupportedHtmlType[]
+): string {
+  const className = generateClassName();
+  let defaultStyle = "";
+  const arglen = args.length;
+  ostyle.forEach((stylestr, i) => {
+    if (i < arglen) {
+      defaultStyle += stylestr + args[i];
+    } else {
+      defaultStyle += stylestr;
+    }
+  });
+
+  injectStyles(className, defaultStyle);
+
+  return className;
+}
+
+export { css, dynamicCSS, styled };
 
 export type { DynamicCSSFn };
