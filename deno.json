@@ -3,7 +3,7 @@
   "workspace": [
     "./example"
   ],
-  "version": "0.8.0",
+  "version": "0.8.1",
   "tasks": {
     "dev": "deno test --watch mod.ts"
   },
