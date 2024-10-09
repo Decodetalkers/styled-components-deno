@@ -31,7 +31,7 @@ if (release_mode) {
 
 const favicon = "favicon.ico";
 
-ensureDir(distDir);
+await ensureDir(distDir);
 
 const fsRoot = `${Deno.cwd()}/dist/debug`;
 
