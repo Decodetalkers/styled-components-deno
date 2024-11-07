@@ -145,7 +145,7 @@ type IdRemember<T> = {
   mappedId: Map<T, string>;
 };
 
-type StoragedFun<T extends keyof JSX.IntrinsicElements, I> =
+type StoredFun<T extends keyof JSX.IntrinsicElements, I> =
   & React.FC<JSX.IntrinsicElements[T]>
   & IdRemember<I>;
 
@@ -172,7 +172,7 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
     return createElement<T, I>(tag, ostyle, ...args);
   }
 
-  const ElementTmp: StoragedFun<T, I> = Object.assign((
+  const ElementTmp: StoredFun<T, I> = Object.assign((
     props: JSX.IntrinsicElements[T] & I,
   ) => {
     let defaultStyle = "";
