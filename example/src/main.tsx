@@ -2,27 +2,31 @@ import type { PropsWithChildren } from "react";
 
 import { render } from "preact";
 
-import { useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 import styled, { css, dynamicCSS, StyleGroup } from "styled-components-deno";
 
+import colors from "./colors.ts";
 const FontSize = 3;
 
-const styledKeys = ["hello", "hide"] as const;
+const styledKeys = ["fade-in-section", "is-visible"] as const;
 
-const style = new StyleGroup(styledKeys, "hello");
-style.setCSS("hello")`
-  font-size: 2em
-  text-align: center
-`
-style.setCSS("hide")`
-  font-size: 10em
-`
+const style = new StyleGroup(styledKeys, "fade-in-section");
 
-const e = style.generate()
+style.setCSS("fade-in-section")`
+  opacity: 0;
+  transform: translateY(20vh);
+  visibility: hidden;
+  transition: opacity 0.6s ease-out, transform 1.2s ease-out;
+  will-change: opacity, visibility;
+`;
+style.setCSS("is-visible")`
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+`;
 
-// The output will be hello
-console.log(e.hello)
+const fadeCSS = style.generate();
 
 const Title3 = styled.div`
   font-size: ${FontSize}em;
@@ -66,6 +70,39 @@ function Title1({ title, children }: PropsWithChildren<TitleProp>) {
   );
 }
 
+const Box = styled.div`
+  padding: 50px;
+  margin: 20px 0;
+  & span {
+    background-color: rgba(255, 255, 255, 0.5);
+    display: inline-block;
+    padding: 5px;
+    border-radius: 3px;
+  }
+`;
+
+function FadeInSection({ children }: PropsWithChildren) {
+  const [isVisible, setVisible] = useState(true);
+  const domRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => setVisible(entry.isIntersecting));
+    });
+    observer.observe(domRef.current!);
+    return () => observer.unobserve(domRef.current!);
+  }, []);
+  return (
+    <div
+      className={`${fadeCSS["fade-in-section"]} ${
+        isVisible ? fadeCSS["is-visible"] : ""
+      }`}
+      ref={domRef}
+    >
+      {children}
+    </div>
+  );
+}
+
 const Title2 = styled(Title1)`
   font-size: 2em;
   text-align: center;
@@ -91,11 +128,12 @@ const Title6 = css`
   color: #BF4F74;
 `;
 
-const mount = document.getElementById("mount");
-
-if (mount) {
-  render(<App />, mount!);
-}
+const MainDiv = styled.div`
+  font-family: sans-serif;
+  text-align: center;
+  max-width: 100%;
+  padding: 1em;
+`;
 
 function MovedWindow() {
   const [windowPos, setWindowPos] = useState<WindowPosition>({ x: 0, y: 0 });
@@ -138,19 +176,34 @@ function MovedWindow() {
 
 function App() {
   return (
-    <main>
-      <div>
+    <MainDiv>
+      <FadeInSection>
         <Title1 title={"CSS 1"}>
           <p>This a origin all one with out any css</p>
         </Title1>
+
         <Title2 title={"css1 with css"}>CSS2 I add css to CSS1</Title2>
         <Title3>CSS3: add base css</Title3>
         <Title4>CSS4: I am css with style object</Title4>
         <Title5 highlight={false}>CSS5: Title without highlight</Title5>
         <Title5 highlight={true}>CSS5: Title With highlight</Title5>
         <div class={Title6}>CSS 6</div>
-        <MovedWindow />
-      </div>
-    </main>
+        <div class={Title6}>CSS 7</div>
+      </FadeInSection>
+      {colors.map((color) => (
+        <FadeInSection key={color}>
+          <Box style={{ backgroundColor: color }}>
+            <span>{color}</span>
+          </Box>
+        </FadeInSection>
+      ))}
+      <MovedWindow />
+    </MainDiv>
   );
+}
+
+const mount = document.getElementById("mount");
+
+if (mount) {
+  render(<App />, mount!);
 }

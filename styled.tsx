@@ -437,6 +437,7 @@ class StyleGroup<T extends readonly string[]> {
   get mainKey(): T[number] {
     return this._mainKey;
   }
+
   generate(): {
     [K in T[number]]: string;
   } {
@@ -446,8 +447,8 @@ class StyleGroup<T extends readonly string[]> {
     let innerHTML = ""
 
     this.keys.forEach((key, _) => {
-      result[key] = `.${key}`; // Example logic
-      let injectName = result[key];
+      result[key] = key; // Example logic
+      let injectName = `.${result[key]}`;
       if (key != this.mainKey) {
         injectName = `.${this.mainKey}.${key}`;
       }
