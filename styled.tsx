@@ -400,6 +400,67 @@ function css(
   return className;
 }
 
-export { css, dynamicCSS, styled };
+class StyleGroup<T extends readonly string[]> {
+  keys: T;
+  _mainKey: T[number];
+  maps: Map<string, string> = new Map();
+  constructor(keys: T, mainKey: T[number]) {
+    this.keys = keys;
+    this._mainKey = mainKey;
+    for (const key in keys) {
+      this.maps.set(key, "");
+    }
+  }
+  init(initfn: (key: T[number]) => string) {
+    for (const key in this.keys) {
+      const css = initfn(key);
+      this.maps.set(key, css);
+    }
+  }
+  setCSS(
+    key: T[number],
+  ): (css: TemplateStringsArray, ...args: SupportedHtmlType[]) => void {
+    return (ostyle: TemplateStringsArray, ...args: SupportedHtmlType[]) => {
+      let targetCSS = "";
+      const arglen = args.length;
+      ostyle.forEach((stylestr, i) => {
+        if (i < arglen) {
+          targetCSS += stylestr + args[i];
+        } else {
+          targetCSS += stylestr;
+        }
+      });
+
+      this.maps.set(key, targetCSS);
+    };
+  }
+  get mainKey(): T[number] {
+    return this._mainKey;
+  }
+  generate(): {
+    [K in T[number]]: string;
+  } {
+    const result = {} as {
+      [key: string]: string;
+    };
+    let innerHTML = ""
+
+    this.keys.forEach((key, _) => {
+      result[key] = `.${key}`; // Example logic
+      let injectName = result[key];
+      if (key != this.mainKey) {
+        injectName = `.${this.mainKey}.${key}`;
+      }
+      innerHTML += `${injectName} { ${this.maps.get(key)!} }\n`;
+    });
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = innerHTML;
+    document.head.appendChild(styleSheet);
+
+    return result as { [K in T[number]]: string };
+  }
+}
+
+export { css, dynamicCSS, StyleGroup, styled };
 
 export type { DynamicCSSFn };

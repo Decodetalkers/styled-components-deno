@@ -4,9 +4,25 @@ import { render } from "preact";
 
 import { useRef, useState } from "preact/hooks";
 
-import styled, { css, dynamicCSS } from "styled-components-deno";
+import styled, { css, dynamicCSS, StyleGroup } from "styled-components-deno";
 
 const FontSize = 3;
+
+const styledKeys = ["hello", "hide"] as const;
+
+const style = new StyleGroup(styledKeys, "hello");
+style.setCSS("hello")`
+  font-size: 2em
+  text-align: center
+`
+style.setCSS("hide")`
+  font-size: 10em
+`
+
+const e = style.generate()
+
+// The output will be hello
+console.log(e.hello)
 
 const Title3 = styled.div`
   font-size: ${FontSize}em;
