@@ -7,6 +7,13 @@ import {
 
 import type React from "react";
 import { domElements, type SupportedHTMLElements } from "./domElements.ts";
+import type {
+  ElementCallBackFun,
+  FollowedClassName,
+  RenderFunc,
+  StyledElement,
+  SupportedHtmlType,
+} from "./types.ts";
 
 // deno-lint-ignore no-explicit-any
 export function toSnakeCase<T extends Record<string, any>>(
@@ -107,10 +114,6 @@ function createElementObject<T extends keyof JSX.IntrinsicElements>(
   return Element;
 }
 
-export type StyledElement<T extends keyof JSX.IntrinsicElements> =
-  & React.FC<JSX.IntrinsicElements[T]>
-  & FollowedClassName;
-
 function createElement<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
@@ -152,8 +155,6 @@ type IdRemember<T> = {
 type StoredFun<T extends keyof JSX.IntrinsicElements, I> =
   & React.FC<JSX.IntrinsicElements[T]>
   & IdRemember<I>;
-
-type ElementCallBackFun<I> = (input: I) => SupportedHtmlType;
 
 function isSupportElementArray<I>(
   arr: ElementCallBackFun<I>[] | SupportedHtmlType[],
@@ -249,19 +250,6 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
     }, { className: undefined });
     return Element;
   };
-}
-
-type SupportedHtmlType = string | number;
-
-type FollowedClassName = {
-  className?: string;
-};
-
-interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
-  <I>(
-    defaultStyle: TemplateStringsArray | object,
-    ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-  ): StyledElement<T>;
 }
 
 type Styled =

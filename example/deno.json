@@ -1,14 +1,14 @@
 {
   "imports": {
-    "@std/async": "jsr:@std/async@^1.0.3",
-    "@std/cli": "jsr:@std/cli@^1.0.3",
-    "@std/fs": "jsr:@std/fs@^1.0.1",
-    "@std/http": "jsr:@std/http@^1.0.3",
-    "@std/path": "jsr:@std/path@^1.0.2",
-    "esbuild": "npm:esbuild@^0.23.1",
-    "esbuild_deno_loader": "jsr:@luca/esbuild-deno-loader@^0.10.3",
-    "preact": "npm:preact@^10.23.2",
-    "react": "npm:react@^18.3.1",
+    "@std/async": "jsr:@std/async@^1.0.9",
+    "@std/cli": "jsr:@std/cli@^1.0.10",
+    "@std/fs": "jsr:@std/fs@^1.0.9",
+    "@std/http": "jsr:@std/http@^1.0.12",
+    "@std/path": "jsr:@std/path@^1.0.8",
+    "esbuild": "npm:esbuild@^0.24.2",
+    "esbuild_deno_loader": "jsr:@luca/esbuild-deno-loader@^0.11.1",
+    "preact": "npm:preact@^10.25.4",
+    "react": "npm:react@^19.0.0",
     "~/functions/": "./functions/",
     "styled-components-deno": "../mod.ts"
   },
