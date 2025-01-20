@@ -1,10 +1,10 @@
-/** @jsxRuntime automatic */
-/** @jsxImportSource npm:preact@^10.23.2 */
-
 import {
   type ClassAttributes,
+  cloneElement,
+  type FunctionComponent,
   h as createPreactElement,
   type JSX,
+  type VNode,
 } from "preact";
 
 import type React from "react";
@@ -167,7 +167,7 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
   ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-): React.FC<JSX.IntrinsicElements[T]> {
+): FunctionComponent<JSX.IntrinsicElements[T]> {
   if (isSupportElementArray<I>(args)) {
     return createElement<T, I>(tag, ostyle, ...args);
   }
@@ -206,30 +206,38 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
   return ElementTmp;
 }
 
+/*
+ * This require the function input parma contains a className input to work
+ */
 function recreateElement<T extends keyof JSX.IntrinsicElements>(
-  Component: React.FC<JSX.IntrinsicElements[T]>,
-): React.FC<JSX.IntrinsicElements[T]> {
-  return (style: TemplateStringsArray) => {
-    const defaultStyle = style.join("");
+  Component: FunctionComponent<{ className?: string }>,
+): (
+  style: TemplateStringsArray,
+  ...args: SupportedHtmlType[]
+) => React.Fc<JSX.IntrinsicElements[T]> {
+  return (style: TemplateStringsArray, ...args: SupportedHtmlType[]) => {
+    let defaultStyle = "";
+    const arglen = args.length;
+    style.forEach((stylestr, i) => {
+      if (i < arglen) {
+        defaultStyle += stylestr + args[i];
+      } else {
+        defaultStyle += stylestr;
+      }
+    });
     const Element = (
       props: JSX.IntrinsicElements[T],
     ) => {
-      const { style, children, ...restProps } = props;
-
-      const className = generateClassName();
-      injectStyles(className, defaultStyle);
+      const { children, ...restProps } = props;
+      const newclassName = generateClassName();
+      injectStyles(newclassName, defaultStyle);
+      const component: VNode = createPreactElement(Component, {});
 
       const newProps: Prop = {
-        className: props.className || className,
-        style,
+        className: props.className || newclassName,
         ...restProps,
       } as Prop;
-
-      return (
-        <div className={className}>
-          <Component {...newProps}>{children}</Component>
-        </div>
-      );
+      return cloneElement(component, newProps, children);
     };
     return Element;
   };
@@ -254,7 +262,7 @@ type Styled =
 const styledTmp: any = recreateElement;
 
 domElements.forEach((domElement) => {
-  styledTmp[domElement] = function <I,>(
+  styledTmp[domElement] = function <I>(
     style: TemplateStringsArray | object,
     ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
   ) {
@@ -411,12 +419,14 @@ class StyleGroup<T extends readonly string[]> {
       this.maps.set(key, "");
     }
   }
+
   init(initfn: (key: T[number]) => string) {
     for (const key in this.keys) {
       const css = initfn(key);
       this.maps.set(key, css);
     }
   }
+
   setCSS(
     key: T[number],
   ): (css: TemplateStringsArray, ...args: SupportedHtmlType[]) => void {
@@ -434,6 +444,7 @@ class StyleGroup<T extends readonly string[]> {
       this.maps.set(key, targetCSS);
     };
   }
+
   get mainKey(): T[number] {
     return this._mainKey;
   }
@@ -444,7 +455,7 @@ class StyleGroup<T extends readonly string[]> {
     const result = {} as {
       [key: string]: string;
     };
-    let innerHTML = ""
+    let innerHTML = "";
 
     this.keys.forEach((key, _) => {
       result[key] = key; // Example logic
@@ -462,6 +473,6 @@ class StyleGroup<T extends readonly string[]> {
   }
 }
 
-export { css, dynamicCSS, StyleGroup, styled };
+export { css, dynamicCSS, styled, StyleGroup };
 
 export type { DynamicCSSFn };

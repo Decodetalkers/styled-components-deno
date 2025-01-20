@@ -25,9 +25,9 @@
  * ```
  */
 
-import { css, dynamicCSS, StyleGroup, styled } from "./styled.tsx";
+import { css, dynamicCSS, StyleGroup, styled } from "./styled.ts";
 
-export type { DynamicCSSFn } from "./styled.tsx";
+export type { DynamicCSSFn } from "./styled.ts";
 
 export default styled;
 

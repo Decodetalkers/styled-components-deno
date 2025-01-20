@@ -42,6 +42,7 @@ const Title4 = styled.div({
 
 type TitleProp = {
   title?: string;
+  className?: string;
 };
 
 type WindowPosition = {
@@ -61,9 +62,9 @@ const Window = dynamicCSS<WindowPosition>`
   backdrop-filter: blur(10px);
 `;
 
-function Title1({ title, children }: PropsWithChildren<TitleProp>) {
+function Title1({ title, className, children }: PropsWithChildren<TitleProp>) {
   return (
-    <div>
+    <div className={className}>
       <h1>{title}</h1>
       {children}
     </div>
