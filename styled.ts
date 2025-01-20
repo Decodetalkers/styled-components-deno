@@ -218,7 +218,7 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
 ): (
   style: TemplateStringsArray,
   ...args: SupportedHtmlType[]
-) => React.Fc<JSX.IntrinsicElements[T]> {
+) => StyledElement<T> {
   return (style: TemplateStringsArray, ...args: SupportedHtmlType[]) => {
     let defaultStyle = "";
     const arglen = args.length;
@@ -229,7 +229,7 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
         defaultStyle += stylestr;
       }
     });
-    const Element = (
+    const Element: StyledElement<T> = Object.assign((
       props: JSX.IntrinsicElements[T],
     ) => {
       const { children, ...restProps } = props;
@@ -238,14 +238,15 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
       if (component.className) {
         newclassName = `${component.className} ${newclassName}`;
       }
-      console.log(newclassName);
 
+      const className = props.className || newclassName;
+      Element.className = className;
       const newProps: Prop = {
-        className: props.className || newclassName,
+        className,
         ...restProps,
       } as Prop;
       return createPreactElement(component, newProps, children);
-    };
+    }, { className: undefined });
     return Element;
   };
 }
