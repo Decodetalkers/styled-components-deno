@@ -104,6 +104,11 @@ function FadeInSection({ children }: PropsWithChildren) {
   );
 }
 
+// This extend the Title4
+const Title4Extend = styled(Title4)`
+  font-weight: bold;
+`;
+
 const Title2 = styled(Title1)`
   font-size: 2em;
   text-align: center;
@@ -186,6 +191,9 @@ function App() {
         <Title2 title={"css1 with css"}>CSS2 I add css to CSS1</Title2>
         <Title3>CSS3: add base css</Title3>
         <Title4>CSS4: I am css with style object</Title4>
+        <Title4Extend>
+          CSS4: I am also css4, but bold
+        </Title4Extend>
         <Title5 highlight={false}>CSS5: Title without highlight</Title5>
         <Title5 highlight={true}>CSS5: Title With highlight</Title5>
         <div class={Title6}>CSS 6</div>

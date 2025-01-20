@@ -1,10 +1,8 @@
 import {
   type ClassAttributes,
-  cloneElement,
   type FunctionComponent,
   h as createPreactElement,
   type JSX,
-  type VNode,
 } from "preact";
 
 import type React from "react";
@@ -85,12 +83,12 @@ function updateStylesCSS(className: string, styles: string) {
 function createElementObject<T extends keyof JSX.IntrinsicElements>(
   tag: T,
   defaultStyleObject: object,
-): React.FC<JSX.IntrinsicElements[T]> {
+): StyledElement<T> {
   let defaultStyle = JSON.stringify(toSnakeCase(defaultStyleObject), null, 2);
   defaultStyle = defaultStyle.replaceAll(",", ";");
   defaultStyle = defaultStyle.replaceAll('"', "");
   const className = generateClassName();
-  const Element = (
+  const Element: StyledElement<T> = Object.assign((
     props: JSX.IntrinsicElements[T],
   ) => {
     const { children, ...restProps } = props;
@@ -102,19 +100,24 @@ function createElementObject<T extends keyof JSX.IntrinsicElements>(
       className: props.className || className,
       ...restProps,
     } as Prop;
+    Element.className = className;
 
     return createPreactElement(tag, newProp, children);
-  };
+  }, { className: undefined });
   return Element;
 }
+
+export type StyledElement<T extends keyof JSX.IntrinsicElements> =
+  & React.FC<JSX.IntrinsicElements[T]>
+  & FollowedClassName;
 
 function createElement<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
   ...args: SupportedHtmlType[]
-): React.FC<JSX.IntrinsicElements[T]> {
+): StyledElement<T> {
   const className = generateClassName();
-  const Element = (
+  const Element: StyledElement<T> = Object.assign((
     props: JSX.IntrinsicElements[T] & I,
   ) => {
     const { children, ...restProps } = props;
@@ -135,9 +138,10 @@ function createElement<T extends keyof JSX.IntrinsicElements, I>(
       className: props.className || className,
       ...restProps,
     } as Prop;
+    Element.className = className;
 
     return createPreactElement(tag, newProp, children);
-  };
+  }, { className: undefined });
   return Element;
 }
 
@@ -167,7 +171,7 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
   ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-): FunctionComponent<JSX.IntrinsicElements[T]> {
+): StyledElement<T> {
   if (isSupportElementArray<I>(args)) {
     return createElement<T, I>(tag, ostyle, ...args);
   }
@@ -210,7 +214,7 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
  * This require the function input parma contains a className input to work
  */
 function recreateElement<T extends keyof JSX.IntrinsicElements>(
-  Component: FunctionComponent<{ className?: string }>,
+  component: FunctionComponent<{ className?: string }> & FollowedClassName,
 ): (
   style: TemplateStringsArray,
   ...args: SupportedHtmlType[]
@@ -229,15 +233,18 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
       props: JSX.IntrinsicElements[T],
     ) => {
       const { children, ...restProps } = props;
-      const newclassName = generateClassName();
+      let newclassName = generateClassName();
       injectStyles(newclassName, defaultStyle);
-      const component: VNode = createPreactElement(Component, {});
+      if (component.className) {
+        newclassName = `${component.className} ${newclassName}`;
+      }
+      console.log(newclassName);
 
       const newProps: Prop = {
         className: props.className || newclassName,
         ...restProps,
       } as Prop;
-      return cloneElement(component, newProps, children);
+      return createPreactElement(component, newProps, children);
     };
     return Element;
   };
@@ -245,11 +252,15 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
 
 type SupportedHtmlType = string | number;
 
+type FollowedClassName = {
+  className?: string;
+};
+
 interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
   <I>(
     defaultStyle: TemplateStringsArray | object,
     ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-  ): React.Fc<JSX.IntrinsicElements[T]>;
+  ): StyledElement<T>;
 }
 
 type Styled =
