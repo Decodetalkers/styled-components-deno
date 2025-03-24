@@ -4,7 +4,7 @@ import { render } from "preact";
 
 import { useEffect, useRef, useState } from "preact/hooks";
 
-import styled, { css, dynamicCSS, StyleGroup } from "styled-components-deno";
+import styled, { css, dynamicCSS, StyleGroup } from "@nobody/styled-components-deno";
 
 import colors from "./colors.ts";
 const FontSize = 3;
