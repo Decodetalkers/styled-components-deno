@@ -58,7 +58,8 @@ function queryClassName(className: string): boolean {
   const styles = document.styleSheets;
   for (const style of styles) {
     for (const rule of style.cssRules) {
-      if (rule.cssText.includes(`.${className}`)) {
+      // HACK: make sure there is a space
+      if (rule.cssText.includes(`.${className} `)) {
         return true;
       }
     }
