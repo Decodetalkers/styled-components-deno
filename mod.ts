@@ -25,10 +25,16 @@
  * ```
  */
 
-import { css, dynamicCSS, StyleGroup, styled } from "./styled.ts";
+import {
+  AttributeGroup,
+  css,
+  dynamicCSS,
+  styled,
+  StyleGroup,
+} from "./styled.ts";
 
 export type { DynamicCSSFn } from "./styled.ts";
 
 export default styled;
 
-export { css, dynamicCSS, StyleGroup, styled };
+export { AttributeGroup, css, dynamicCSS, styled, StyleGroup };

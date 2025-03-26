@@ -54,8 +54,20 @@ function generateClassName() {
   return `styled-component-${ID.next()}`;
 }
 
+function queryClassName(className: string): boolean {
+  const styles = document.styleSheets;
+  for (const style of styles) {
+    for (const rule of style.cssRules) {
+      if (rule.cssText.includes(`.${className}`)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function injectStyles(className: string, styles: string) {
-  if (!document.querySelector(`.${className}`)) {
+  if (!queryClassName(className)) {
     const styleSheet = document.createElement("style");
     styleSheet.innerHTML = `.${className} { ${styles} }`;
     document.head.appendChild(styleSheet);
@@ -63,7 +75,7 @@ function injectStyles(className: string, styles: string) {
 }
 
 function injectStylesObject(className: string, styles: string) {
-  if (!document.querySelector(`.${className}`)) {
+  if (!queryClassName(className)) {
     const styleSheet = document.createElement("style");
     styleSheet.innerHTML = `.${className} ${styles}`;
     document.head.appendChild(styleSheet);
@@ -71,7 +83,7 @@ function injectStylesObject(className: string, styles: string) {
 }
 
 function updateStylesCSS(className: string, styles: string) {
-  if (!document.querySelector(`.${className}`)) {
+  if (!queryClassName(className)) {
     return;
   }
   for (let i = 0; i < document.styleSheets.length; i++) {
@@ -196,6 +208,7 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
 
     if (!className) {
       className = generateClassName();
+      console.log("bbb");
       injectStyles(className, defaultStyle);
       ElementTmp.mappedId.set(props as I, className);
     }
@@ -235,6 +248,7 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
     ) => {
       const { children, ...restProps } = props;
       let newclassName = generateClassName();
+      console.log("aaa");
       injectStyles(newclassName, defaultStyle);
       if (component.className) {
         newclassName = `${component.className} ${newclassName}`;
@@ -408,6 +422,67 @@ function css(
   return className;
 }
 
+class AttributeGroup<T extends readonly string[]> {
+  keys: T;
+  _groupName: string;
+  _baseCSS: string = "";
+  maps: Map<string, string> = new Map();
+  constructor(keys: T) {
+    this.keys = keys;
+    for (const key in keys) {
+      this.maps.set(key, "");
+    }
+    this._groupName = generateClassName();
+  }
+
+  initBaseCSS(baseCSS: TemplateStringsArray) {
+    const base = baseCSS.join(" ");
+    this._baseCSS = base;
+  }
+
+  init(initfn: (key: T[number]) => string) {
+    for (const key in this.keys) {
+      const css = initfn(key);
+      this.maps.set(key, css);
+    }
+  }
+
+  setCSS(
+    key: T[number],
+  ): (css: TemplateStringsArray, ...args: SupportedHtmlType[]) => void {
+    return (ostyle: TemplateStringsArray, ...args: SupportedHtmlType[]) => {
+      let targetCSS = "";
+      const arglen = args.length;
+      ostyle.forEach((stylestr, i) => {
+        if (i < arglen) {
+          targetCSS += stylestr + args[i];
+        } else {
+          targetCSS += stylestr;
+        }
+      });
+
+      this.maps.set(key, targetCSS);
+    };
+  }
+
+  get groupName(): string {
+    return this._groupName;
+  }
+
+  // Final need to run generate to insert the styles
+  generate() {
+    let innerHTML = `.${this._groupName} { ${this._baseCSS} }\n`;
+
+    this.keys.forEach((key, _) => {
+      const injectName = `.${this._groupName}[${key}]`;
+      innerHTML += `${injectName} { ${this.maps.get(key)!} }\n`;
+    });
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = innerHTML;
+    document.head.appendChild(styleSheet);
+  }
+}
+
 class StyleGroup<T extends readonly string[]> {
   keys: T;
   _mainKey: T[number];
@@ -473,6 +548,6 @@ class StyleGroup<T extends readonly string[]> {
   }
 }
 
-export { css, dynamicCSS, styled, StyleGroup };
+export { AttributeGroup, css, dynamicCSS, styled, StyleGroup };
 
 export type { DynamicCSSFn };

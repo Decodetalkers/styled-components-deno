@@ -4,7 +4,12 @@ import { render } from "preact";
 
 import { useEffect, useRef, useState } from "preact/hooks";
 
-import styled, { css, dynamicCSS, StyleGroup } from "@nobody/styled-components-deno";
+import styled, {
+  AttributeGroup,
+  css,
+  dynamicCSS,
+  StyleGroup,
+} from "@nobody/styled-components-deno";
 
 import colors from "./colors.ts";
 const FontSize = 3;
@@ -27,6 +32,25 @@ style.setCSS("is-visible")`
 `;
 
 const fadeCSS = style.generate();
+
+const attributeKeys = [`href^="#"`, `href*="example"`] as const;
+
+const attributeStyle = new AttributeGroup(attributeKeys);
+
+attributeStyle.initBaseCSS`
+  color: blue
+`;
+
+attributeStyle.setCSS(`href^="#"`)`
+  background-color: gold;
+`;
+
+attributeStyle.setCSS(`href*="example"`)`
+  background-color: silver;
+`;
+
+attributeStyle.generate();
+const attributeCSS = attributeStyle.groupName;
 
 const Title3 = styled.div`
   font-size: ${FontSize}em;
@@ -184,6 +208,16 @@ function App() {
   return (
     <MainDiv>
       <FadeInSection>
+        <ul>
+          <li>
+            <a href="#internal" className={attributeCSS}>Internal link</a>
+          </li>
+          <li>
+            <a href="http://example.com" className={attributeCSS}>
+              Example Link
+            </a>
+          </li>
+        </ul>
         <Title1 title="CSS 1">
           <p>This a origin all one with out any css</p>
         </Title1>
