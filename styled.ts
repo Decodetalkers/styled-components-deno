@@ -425,8 +425,8 @@ function css(
 
 class AttributeGroup<T extends readonly string[]> {
   keys: T;
-  _groupName: string;
-  _baseCSS: string = "";
+  private _groupName: string;
+  private _baseCSS: string = "";
   maps: Map<string, string> = new Map();
   constructor(keys: T) {
     this.keys = keys;
