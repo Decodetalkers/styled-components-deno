@@ -209,7 +209,6 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
 
     if (!className) {
       className = generateClassName();
-      console.log("bbb");
       injectStyles(className, defaultStyle);
       ElementTmp.mappedId.set(props as I, className);
     }
