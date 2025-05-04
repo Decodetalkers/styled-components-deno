@@ -39,7 +39,7 @@ const fadeCSS = style.generate();
 const Title3 = styled.div`
   font-size: ${FontSize}em;
   text-align: center;
-  color: #BF4F74;
+  color: #bf4f74;
 `;
 
 const Title4 = styled.div({
@@ -120,26 +120,26 @@ const Title4Extend = styled(Title4)`
 const Title2 = styled(Title1)`
   font-size: 2em;
   text-align: center;
-  color: #000FFEE;
+  color: #000ffee;
   margin-top: 40px;
   margin-bottom: 40px;
 `;
 
 const Title5 = styled.div<{ highlight?: boolean }>`
-    font-size: 3em;
-    text-align: center;
-    color: ${(prop) => {
-  if (prop.highlight) {
-    return "#BF4F74";
-  }
-  return "#777777";
-}}
+  font-size: 3em;
+  text-align: center;
+  color: ${(prop) => {
+    if (prop.highlight) {
+      return "#BF4F74";
+    }
+    return "#777777";
+  }};
 `;
 
 const Title6 = css`
   font-size: ${FontSize}em;
   text-align: center;
-  color: #BF4F74;
+  color: #bf4f74;
 `;
 
 const MainDiv = styled.div`
