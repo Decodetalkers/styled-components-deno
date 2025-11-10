@@ -1,6 +1,6 @@
 import { styled } from "./mod.ts";
 
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "@std/assert";
 import { elements } from "./domElements.ts";
 import { toSnakeCase } from "./styled.ts";
 
