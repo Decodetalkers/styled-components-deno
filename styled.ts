@@ -496,7 +496,7 @@ function setAnimation(
         targetCSS += stylestr;
       }
     });
-    const innerHTML = `@keyframe ${name} { ${targetCSS}} }\n`;
+    const innerHTML = `@keyframes ${name} { ${targetCSS}} }\n`;
     const styleSheet = document.createElement("style");
     styleSheet.innerHTML = innerHTML;
     document.head.appendChild(styleSheet);
