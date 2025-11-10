@@ -483,6 +483,26 @@ class AttributeGroup<T extends readonly string[]> {
   }
 }
 
+function setAnimation(
+  name: string,
+): (css: TemplateStringsArray, ...args: SupportedHtmlType[]) => void {
+  return (ostyle: TemplateStringsArray, ...args: SupportedHtmlType[]) => {
+    let targetCSS = "";
+    const arglen = args.length;
+    ostyle.forEach((stylestr, i) => {
+      if (i < arglen) {
+        targetCSS += stylestr + args[i];
+      } else {
+        targetCSS += stylestr;
+      }
+    });
+    const innerHTML = `@keyframe ${name} { ${targetCSS}} }\n`;
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = innerHTML;
+    document.head.appendChild(styleSheet);
+  };
+}
+
 class StyleGroup<T extends readonly string[]> {
   keys: T;
   _mainKey: T[number];
@@ -548,6 +568,6 @@ class StyleGroup<T extends readonly string[]> {
   }
 }
 
-export { AttributeGroup, css, dynamicCSS, styled, StyleGroup };
+export { AttributeGroup, css, dynamicCSS, setAnimation, styled, StyleGroup };
 
 export type { DynamicCSSFn };
