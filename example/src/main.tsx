@@ -8,6 +8,7 @@ import styled, {
   AttributeGroup,
   css,
   dynamicCSS,
+  setAnimation,
   StyleGroup,
 } from "@nobody/styled-components-deno";
 
@@ -29,6 +30,21 @@ style.setCSS("is-visible")`
   opacity: 1;
   transform: none;
   visibility: visible;
+`;
+
+setAnimation("slider")`
+    0%, 30% {
+      transform: translateX(0%);
+    }
+    33%, 63% {
+      transform: translateX(-100%);
+    }
+    66%, 96% {
+      transform: translateX(-200%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
 `;
 
 const fadeCSS = style.generate();

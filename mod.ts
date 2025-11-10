@@ -29,6 +29,7 @@ import {
   AttributeGroup,
   css,
   dynamicCSS,
+  setAnimation,
   styled,
   StyleGroup,
 } from "./styled.ts";
@@ -37,4 +38,4 @@ export type { DynamicCSSFn } from "./styled.ts";
 
 export default styled;
 
-export { AttributeGroup, css, dynamicCSS, styled, StyleGroup };
+export { AttributeGroup, css, dynamicCSS, setAnimation, styled, StyleGroup };
