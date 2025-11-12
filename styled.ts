@@ -248,7 +248,6 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
     ) => {
       const { children, ...restProps } = props;
       let newclassName = generateClassName();
-      console.log("aaa");
       injectStyles(newclassName, defaultStyle);
       if (component.className) {
         newclassName = `${component.className} ${newclassName}`;

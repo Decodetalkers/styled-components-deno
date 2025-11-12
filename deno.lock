@@ -21,9 +21,11 @@
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "npm:esbuild@~0.24.2": "0.24.2",
-    "npm:preact@*": "10.25.4",
-    "npm:preact@^10.25.4": "10.25.4",
-    "npm:react@19": "19.0.0"
+    "npm:preact@*": "10.27.2",
+    "npm:preact@^10.25.4": "10.27.2",
+    "npm:preact@^10.27.2": "10.27.2",
+    "npm:react@19": "19.2.0",
+    "npm:react@^19.2.0": "19.2.0"
   },
   "jsr": {
     "@luca/esbuild-deno-loader@0.11.1": {
@@ -260,19 +262,19 @@
       "scripts": true,
       "bin": true
     },
-    "preact@10.25.4": {
-      "integrity": "sha512-jLdZDb+Q+odkHJ+MpW/9U5cODzqnB+fy2EiHSZES7ldV5LK7yjlVzTp7R8Xy6W6y75kfK8iWYtFVH7lvjwrCMA=="
+    "preact@10.27.2": {
+      "integrity": "sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg=="
     },
-    "react@19.0.0": {
-      "integrity": "sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ=="
+    "react@19.2.0": {
+      "integrity": "sha512-tmbWg6W31tQLeB5cdIBOicJDJRR2KzXsV7uSK9iNfLWQ5bIZfxuPEHp7M8wiHyHnn0DD1i7w3Zmin0FtkrwoCQ=="
     }
   },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@^1.0.15",
       "npm:preact@*",
-      "npm:preact@^10.25.4",
-      "npm:react@19"
+      "npm:preact@^10.27.2",
+      "npm:react@^19.2.0"
     ],
     "members": {
       "example": {
