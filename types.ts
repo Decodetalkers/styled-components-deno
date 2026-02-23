@@ -1,8 +1,9 @@
 export type SupportedHtmlType = string | number;
 import type { FunctionalComponent, JSX } from "preact";
 
-// This defined the className binding with a React.Fc
+// This defined the className binding with a FunctionalComponent
 export type FollowedClassName = {
+  // This just suggested className. If you defined it yourself, you should use that one
   className?: string;
 };
 

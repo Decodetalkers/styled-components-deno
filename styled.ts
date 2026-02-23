@@ -120,10 +120,9 @@ function createElementObject<T extends keyof JSX.IntrinsicElements>(
       className: props.className || className,
       ...restProps,
     } as Prop;
-    Element.className = className;
 
     return createPreactElement(tag, newProp, children);
-  }, { className: undefined });
+  }, { className });
   return Element;
 }
 
@@ -154,10 +153,9 @@ function createElement<T extends keyof JSX.IntrinsicElements, I>(
       className: props.className?.toString() || className,
       ...restProps,
     } as Prop;
-    Element.className = className;
 
     return createPreactElement(tag, newProp, children);
-  }, { className: undefined });
+  }, { className });
   return Element;
 }
 
@@ -243,25 +241,25 @@ function recreateElement<T extends keyof JSX.IntrinsicElements, I>(
         defaultStyle += stylestr;
       }
     });
+    let newclassName = generateClassName();
+    if (component.className) {
+      newclassName = `${component.className} ${newclassName}`;
+    }
     const Element: StyledElement<T, I> = Object.assign((
       props: JSX.IntrinsicElements[T] & I,
     ) => {
       const { children, ...restProps } = props;
-      let newclassName = generateClassName();
+
       injectStyles(newclassName, defaultStyle);
-      if (component.className) {
-        newclassName = `${component.className} ${newclassName}`;
-      }
 
       const className = props.className?.toString() || newclassName;
-      Element.className = className;
       const newProps = {
         className,
         ...restProps,
         // deno-lint-ignore no-explicit-any
       } as any;
       return createPreactElement(component, newProps, children);
-    }, { className: undefined });
+    }, { className: newclassName });
     return Element;
   };
 }
