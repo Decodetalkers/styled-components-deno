@@ -1,5 +1,6 @@
 import {
   type ClassAttributes,
+  type DOMAttributes,
   type FunctionComponent,
   h as createPreactElement,
   type JSX,
@@ -47,7 +48,7 @@ class UniqueUid {
 const ID = new UniqueUid();
 
 type Prop =
-  & JSX.DOMAttributes<HTMLInputElement>
+  & DOMAttributes<HTMLInputElement>
   & ClassAttributes<HTMLInputElement>;
 
 function generateClassName() {
