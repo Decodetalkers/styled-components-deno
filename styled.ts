@@ -1,12 +1,11 @@
 import {
   type ClassAttributes,
   type DOMAttributes,
-  type FunctionComponent,
+  type FunctionalComponent,
   h as createPreactElement,
   type JSX,
 } from "preact";
 
-import type React from "react";
 import { domElements, type SupportedHTMLElements } from "./domElements.ts";
 import type {
   ElementCallBackFun,
@@ -132,10 +131,10 @@ function createElement<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
   ...args: SupportedHtmlType[]
-): StyledElement<T> {
+): StyledElement<T, I> {
   const className = generateClassName();
-  const Element: StyledElement<T> = Object.assign((
-    props: JSX.IntrinsicElements[T] & I,
+  const Element: StyledElement<T, I> = Object.assign((
+    props: JSX.IntrinsicElements[T],
   ) => {
     const { children, ...restProps } = props;
     let defaultStyle = "";
@@ -152,7 +151,7 @@ function createElement<T extends keyof JSX.IntrinsicElements, I>(
     injectStyles(className, newstyle);
 
     const newProp: Prop = {
-      className: props.className || className,
+      className: props.className?.toString() || className,
       ...restProps,
     } as Prop;
     Element.className = className;
@@ -167,7 +166,7 @@ type IdRemember<T> = {
 };
 
 type StoredFun<T extends keyof JSX.IntrinsicElements, I> =
-  & React.FC<JSX.IntrinsicElements[T]>
+  & StyledElement<T, I>
   & IdRemember<I>;
 
 function isSupportElementArray<I>(
@@ -186,7 +185,7 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   ostyle: TemplateStringsArray,
   ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-): StyledElement<T> {
+): StyledElement<T, I> {
   if (isSupportElementArray<I>(args)) {
     return createElement<T, I>(tag, ostyle, ...args);
   }
@@ -222,18 +221,18 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
     return createPreactElement(tag, newProp, children);
   }, { mappedId: new Map() });
 
-  return ElementTmp;
+  return ElementTmp as StyledElement<T, I>;
 }
 
 /*
  * This require the function input parma contains a className input to work
  */
-function recreateElement<T extends keyof JSX.IntrinsicElements>(
-  component: FunctionComponent<{ className?: string }> & FollowedClassName,
+function recreateElement<T extends keyof JSX.IntrinsicElements, I>(
+  component: FunctionalComponent<I> & FollowedClassName,
 ): (
   style: TemplateStringsArray,
   ...args: SupportedHtmlType[]
-) => StyledElement<T> {
+) => StyledElement<T, I> {
   return (style: TemplateStringsArray, ...args: SupportedHtmlType[]) => {
     let defaultStyle = "";
     const arglen = args.length;
@@ -244,8 +243,8 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
         defaultStyle += stylestr;
       }
     });
-    const Element: StyledElement<T> = Object.assign((
-      props: JSX.IntrinsicElements[T],
+    const Element: StyledElement<T, I> = Object.assign((
+      props: JSX.IntrinsicElements[T] & I,
     ) => {
       const { children, ...restProps } = props;
       let newclassName = generateClassName();
@@ -254,12 +253,13 @@ function recreateElement<T extends keyof JSX.IntrinsicElements>(
         newclassName = `${component.className} ${newclassName}`;
       }
 
-      const className = props.className || newclassName;
+      const className = props.className?.toString() || newclassName;
       Element.className = className;
-      const newProps: Prop = {
+      const newProps = {
         className,
         ...restProps,
-      } as Prop;
+      // deno-lint-ignore no-explicit-any
+      } as any;
       return createPreactElement(component, newProps, children);
     }, { className: undefined });
     return Element;

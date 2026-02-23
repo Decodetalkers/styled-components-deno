@@ -1,7 +1,5 @@
-import type React from "react";
-
 export type SupportedHtmlType = string | number;
-import type { JSX } from "preact";
+import type { FunctionalComponent, JSX } from "preact";
 
 // This defined the className binding with a React.Fc
 export type FollowedClassName = {
@@ -9,8 +7,8 @@ export type FollowedClassName = {
 };
 
 // This defined the className binding with a React.Fc
-export type StyledElement<T extends keyof JSX.IntrinsicElements> =
-  & React.FC<JSX.IntrinsicElements[T]>
+export type StyledElement<T extends keyof JSX.IntrinsicElements, I = never> =
+  & FunctionalComponent<JSX.IntrinsicElements[T] & I>
   & FollowedClassName;
 
 // supported callback function type
@@ -21,5 +19,5 @@ export interface RenderFunc<T extends keyof JSX.IntrinsicElements> {
   <I>(
     defaultStyle: TemplateStringsArray | object,
     ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-  ): StyledElement<T>;
+  ): StyledElement<T, I>;
 }
