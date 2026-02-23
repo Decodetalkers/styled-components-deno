@@ -258,7 +258,7 @@ function recreateElement<T extends keyof JSX.IntrinsicElements, I>(
       const newProps = {
         className,
         ...restProps,
-      // deno-lint-ignore no-explicit-any
+        // deno-lint-ignore no-explicit-any
       } as any;
       return createPreactElement(component, newProps, children);
     }, { className: undefined });
