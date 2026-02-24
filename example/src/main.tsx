@@ -1,9 +1,6 @@
-import type { PropsWithChildren } from "react";
-
-import { render } from "preact";
+import { type ComponentChildren, render } from "preact";
 
 import { useEffect, useRef, useState } from "preact/hooks";
-
 import styled, {
   AttributeGroup,
   css,
@@ -12,6 +9,10 @@ import styled, {
   StyleGroup,
 } from "@nobody/styled-components-deno";
 
+// deno-lint-ignore ban-types
+type PropsWithChildren<T = {}> = T & {
+  children?: ComponentChildren;
+};
 import colors from "./colors.ts";
 const FontSize = 3;
 
