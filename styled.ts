@@ -159,13 +159,13 @@ function createElement<T extends keyof JSX.IntrinsicElements, I>(
   return Element;
 }
 
-type IdRemember<T> = {
-  mappedId: Map<T, string>;
+type IdRemember = {
+  mappedId: Map<number, string>;
 };
 
 type StoredFun<T extends keyof JSX.IntrinsicElements, I> =
   & StyledElement<T, I>
-  & IdRemember<I>;
+  & IdRemember;
 
 function isSupportElementArray<I>(
   arr: ElementCallBackFun<I>[] | SupportedHtmlType[],
@@ -174,6 +174,20 @@ function isSupportElementArray<I>(
     return true;
   }
   return typeof arr[0] !== "function"; // Check if the first arg is function
+}
+
+function toHash(input: string): number {
+  let hash = 0;
+
+  if (input.length == 0) return hash;
+
+  for (let i = 0; i < input.length; i++) {
+    const char = input.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+
+  return hash;
 }
 
 /**
@@ -202,13 +216,16 @@ function createElementWithProps<T extends keyof JSX.IntrinsicElements, I>(
     });
     const { children, ...restProps } = props;
 
+    // use the hash to storage the key
+    const hash = toHash(JSON.stringify(restProps));
+
     // NOTE: cached the id
-    let className: string | undefined = ElementTmp.mappedId.get(props as I);
+    let className: string | undefined = ElementTmp.mappedId.get(hash);
 
     if (!className) {
       className = generateClassName();
       injectStyles(className, defaultStyle);
-      ElementTmp.mappedId.set(props as I, className);
+      ElementTmp.mappedId.set(hash, className);
     }
 
     const newProp: Prop = {
