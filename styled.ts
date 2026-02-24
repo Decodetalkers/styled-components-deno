@@ -100,15 +100,15 @@ function updateStylesCSS(className: string, styles: string) {
   }
 }
 
-function createElementObject<T extends keyof JSX.IntrinsicElements>(
+function createElementObject<T extends keyof JSX.IntrinsicElements, I>(
   tag: T,
   defaultStyleObject: object,
-): StyledElement<T> {
+): StyledElement<T, I> {
   let defaultStyle = JSON.stringify(toSnakeCase(defaultStyleObject), null, 2);
   defaultStyle = defaultStyle.replaceAll(",", ";");
   defaultStyle = defaultStyle.replaceAll('"', "");
   const className = generateClassName();
-  const Element: StyledElement<T> = Object.assign((
+  const Element: StyledElement<T, I> = Object.assign((
     props: JSX.IntrinsicElements[T],
   ) => {
     const { children, ...restProps } = props;
@@ -294,7 +294,7 @@ domElements.forEach((domElement) => {
   styledTmp[domElement] = function <I>(
     style: TemplateStringsArray | object,
     ...args: ElementCallBackFun<I>[] | SupportedHtmlType[]
-  ) {
+  ): StyledElement<typeof domElement, I> {
     // it is TemplateStringsArray
     if (Array.isArray(style) && "raw" in style) {
       return createElementWithProps<typeof domElement, I>(
@@ -303,7 +303,7 @@ domElements.forEach((domElement) => {
         ...args,
       );
     }
-    return createElementObject<typeof domElement>(domElement, style);
+    return createElementObject<typeof domElement, I>(domElement, style);
   };
 });
 
