@@ -1,4 +1,4 @@
-import { type ComponentChildren, render } from "preact";
+import { render } from "preact";
 
 import { useEffect, useRef, useState } from "preact/hooks";
 import styled, {
@@ -9,10 +9,8 @@ import styled, {
   StyleGroup,
 } from "@nobody/styled-components-deno";
 
-// deno-lint-ignore ban-types
-type PropsWithChildren<T = {}> = T & {
-  children?: ComponentChildren;
-};
+import { type PropsWithChildren } from "preact/compat";
+
 import colors from "./colors.ts";
 const FontSize = 3;
 
